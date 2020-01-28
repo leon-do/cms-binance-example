@@ -11,7 +11,7 @@ class CMS extends Component {
     this.state = {
       url:
         process.env.NODE_ENV === "production"
-          ? "https://binance-api-example.herokuapp.com/"
+          ? "https://binance-api-example.herokuapp.com"
           : "http://localhost:5000",
       list: [],
       title: "",
