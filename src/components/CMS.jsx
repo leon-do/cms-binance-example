@@ -2,14 +2,17 @@ import React, { Component } from "react";
 import axios from "axios";
 import Item from "./Item";
 import Input from "./Input";
-import {Table} from 'react-bootstrap'
+import { Table } from "react-bootstrap";
 
 // this handles the input form and lists the data
 class CMS extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      url: (process.env.PRODUCTION)? 'https://binance-api-example.herokuapp.com/' : 'http://localhost:5000',
+      url:
+        process.env.NODE_ENV === "production"
+          ? "https://binance-api-example.herokuapp.com/"
+          : "http://localhost:5000",
       list: [],
       title: "",
       slug: "",
@@ -17,17 +20,28 @@ class CMS extends Component {
     };
   }
   componentDidMount() {
-    this.getList();
+    this.handleRead();
   }
-  async getList() {
+  async handleCreateContent(e) {
+    await axios.post(this.state.url + "/create", {
+      title: this.state.title,
+      slug: this.state.slug,
+      content: this.state.content
+    });
+    this.handleRead();
+  }
+  async handleRead() {
     const res = await axios.get(this.state.url);
     const list = res.data;
     this.setState({ list });
   }
+  async handleUpdate(updatedData) {
+    await axios.post(this.state.url + '/update', {data: updatedData})
+  }
   async handleDelete(index) {
     const { list } = this.state;
     await axios.delete(this.state.url, { data: { text: list[index]._id } });
-    this.getList();
+    this.handleRead();
   }
   handleSetTitle(e) {
     this.setState({ title: e.target.value });
@@ -38,14 +52,7 @@ class CMS extends Component {
   handleSetContent(e) {
     this.setState({ content: e.target.value });
   }
-  async handlePostContent(e) {
-    await axios.post(this.state.url, {
-      title: this.state.title,
-      slug: this.state.slug,
-      content: this.state.content
-    });
-    this.getList();
-  }
+
   render() {
     return (
       <React.Fragment>
@@ -53,10 +60,12 @@ class CMS extends Component {
           setTitle={e => this.handleSetTitle(e)}
           setSlug={e => this.handleSetSlug(e)}
           setContent={e => this.handleSetContent(e)}
-          postContent={e => this.handlePostContent(e)}
+          postContent={e => this.handleCreateContent(e)}
         ></Input>
-          <br></br><br></br><br></br>
-          <h1> Data </h1>
+        <br></br>
+        <br></br>
+        <br></br>
+        <h1> Data </h1>
         <Table>
           <tbody>
             <tr>
@@ -71,6 +80,7 @@ class CMS extends Component {
                 key={val._id}
                 data={val}
                 onDelete={() => this.handleDelete(index)}
+                onUpdate={updatedData => this.handleUpdate(updatedData)}
               ></Item>
             ))}
           </tbody>
