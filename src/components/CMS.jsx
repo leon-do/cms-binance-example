@@ -37,6 +37,7 @@ class CMS extends Component {
   }
   async handleUpdate(updatedData) {
     await axios.post(this.state.url + '/update', {data: updatedData})
+    alert('Update Complete')
   }
   async handleDelete(index) {
     const { list } = this.state;
