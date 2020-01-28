@@ -36,8 +36,8 @@ class CMS extends Component {
     this.setState({ list });
   }
   async handleUpdate(updatedData) {
-    await axios.post(this.state.url + '/update', {data: updatedData})
-    alert('Update Complete')
+    await axios.post(this.state.url + "/update", { data: updatedData });
+    alert("Update Complete");
   }
   async handleDelete(index) {
     const { list } = this.state;
@@ -74,6 +74,7 @@ class CMS extends Component {
               <td>Title</td>
               <td>Slug</td>
               <td>Content</td>
+              <td>Update</td>
               <td>Delete</td>
             </tr>
             {this.state.list.map((val, index) => (
